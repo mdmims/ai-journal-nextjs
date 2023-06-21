@@ -1,6 +1,7 @@
 import {getUserByClerkId} from "@/utils/auth";
 import {prisma} from "@/utils/db";
 import {NextResponse} from "next/server";
+import {revalidatePath} from "next/cache";
 
 export const POST = async () => {
   const user = await getUserByClerkId()
@@ -11,5 +12,12 @@ export const POST = async () => {
   }
   })
 
+  revalidatePath('/journal')
+
   return NextResponse.json({data: entry})
+}
+
+export const GET = async () => {
+  const entries = await prisma.journalEntry.findMany()
+  return NextResponse.json({data: entries})
 }
